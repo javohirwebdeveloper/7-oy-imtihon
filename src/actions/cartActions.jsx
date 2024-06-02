@@ -4,10 +4,24 @@ export const addToCart = (product) => {
     payload: product,
   };
 };
-
 export const removeFromCart = (productId) => {
   return {
     type: 'REMOVE_FROM_CART',
     payload: productId,
+  };
+};
+export const adjustQuantity = (productId, amount) => {
+  return {
+    type: 'ADJUST_QUANTITY',
+    payload: {
+      productId,
+      amount
+    }
+  };
+};
+export const applyDiscount = (discount) => {
+  return {
+    type: 'APPLY_DISCOUNT',
+    payload: discount,
   };
 };

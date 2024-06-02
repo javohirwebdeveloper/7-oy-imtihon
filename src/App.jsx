@@ -5,8 +5,11 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Product from "./pages/Product";
 import './index.css'
+import Shop from "./pages/Shop";
 import { Provider } from 'react-redux';
 import store from './store';
+import ProductCart from "./pages/ProductCart";
+import ProductCheckout from "./pages/ProductCheckout";
 const App = () => {
   return (
     <Provider store={store}>
@@ -16,9 +19,11 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/product/:id" element={<Product />} />
+          <Route path="/shop" element={<Shop/>}/>
+          <Route path="/cart" element={<ProductCart/>}/>
+          <Route path="/checkout" element={<ProductCheckout/>}/>
         </Routes>
         <Footer />
-        <div className="flex"><h1>salom</h1> <h1>salom</h1></div>
       </div>
     </Router>
     </Provider>

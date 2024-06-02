@@ -19,7 +19,7 @@ const MyCarousel = () => {
       showThumbs={false}
       showStatus={false}
       autoPlay={true}
-      interval={3000}
+      interval={2500}
       renderIndicator={(onClickHandler, isSelected, index, label) => {
         if (isSelected) {
           return (

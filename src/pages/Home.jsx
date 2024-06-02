@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import MyCarousel from '../components/MyCarousel';
 import Card from '../components/Card';
-import Navbar from '../components/Navbar';
 import { HiOutlineChevronRight } from "react-icons/hi2";
+import { FaArrowRightLong } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 import SuperSaleTitle from '../assets/aside/super-sale-title.webp';
 import SuperSale from '../assets/aside/super-sale-title.png';
 import SuperSaleBg from '../assets/aside/super-sale-bg.webp';
 import SuperS from '../assets/aside/super-sale-bg.jpg';
 import productsData from '../data/products.json';
-import { FaArrowRightLong } from "react-icons/fa6";
-import './home.css'
-import { Link } from 'react-router-dom';
+import './home.css';
 
 const Home = () => {
   const [products, setProducts] = useState(productsData.products);
@@ -19,6 +18,7 @@ const Home = () => {
   const [productsPerPage] = useState(9);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: Infinity });
+  const [tempPriceRange, setTempPriceRange] = useState(priceRange);
   const [selectedSize, setSelectedSize] = useState('all');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sortOrder, setSortOrder] = useState('default');
@@ -55,23 +55,18 @@ const Home = () => {
 
   const filterAndSortProducts = () => {
     let newProducts = productsData.products;
-
     if (selectedCategory !== 'all') {
       newProducts = newProducts.filter(product => product.category === selectedCategory);
     }
-
     newProducts = newProducts.filter(product => product.price >= priceRange.min && product.price <= priceRange.max);
-
     if (selectedSize !== 'all') {
       newProducts = newProducts.filter(product => product.size === selectedSize);
     }
-
     if (sortOrder === 'growth') {
       newProducts.sort((a, b) => a.price - b.price);
     } else if (sortOrder === 'decrease') {
       newProducts.sort((a, b) => b.price - a.price);
     }
-
     setProducts(newProducts);
     setCurrentPage(0);
     setFilteredProducts(newProducts.slice(0, productsPerPage));
@@ -80,7 +75,9 @@ const Home = () => {
   const addToCart = (product) => {
     setCartItems([...cartItems, product]);
   };
-
+const handlePriceRangeChange = (e) => {
+    setTempPriceRange({ ...tempPriceRange, min: Number(e.target.value) });
+  };
   const handlePageClick = (event) => {
     const newPage = event.selected;
     setCurrentPage(newPage);
@@ -100,20 +97,19 @@ const Home = () => {
 
   useEffect(() => {
     let filtered = productsData.products;
-
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(product => product.category === selectedCategory);
     }
-
     filtered = filtered.filter(product => product.price >= priceRange.min && product.price <= priceRange.max);
-
     if (selectedSize !== 'all') {
       filtered = filtered.filter(product => product.size === selectedSize);
     }
-
     setFilteredProducts(filtered.slice(0, productsPerPage));
   }, [selectedCategory, priceRange, selectedSize]);
-
+ const handleSortButtonClick = () => {
+    setPriceRange(tempPriceRange);
+    filterAndSortProducts();
+  };
   return (
     <>
       <main className="main main-home mt-[78px]">
@@ -122,131 +118,125 @@ const Home = () => {
       </section>
       <div className="_container">
         <div className="flex justify-between mt-[26px] ">
-         <aside class="flex flex-col pt-3.5">
-  <div class="flex flex-col px-6 pb-9">
-    <div class="pb-9">
-      <h3 class="capitalize mb-1.5 text-lg font-bold leading-[88.88889%] text-[#3D3D3D]" data-spoiler="">
+         <aside className="flex flex-col pt-3.5">
+  <div className="flex flex-col px-6 pb-9">
+    <div className="pb-9">
+      <h3 className="capitalize mb-1.5 text-lg font-bold leading-[88.88889%] text-[#3D3D3D]" data-spoiler="">
         Categories
       </h3>
-      <nav class="pl-3">
-        <ul class="text-base leading-[2.66667] w-[280px]">
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "house" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('House Plants'); setActiveButton('house')}}>
+      <nav className="pl-3">
+        <ul className="text-base leading-[2.66667] w-[280px]">
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "house" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('House Plants'); setActiveButton('house')}}>
               <span>House Plants</span>
-              <span>(33)</span>
+              <span>(3)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-          <a class={`${activeButton === "potter" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Potter Plants'); setActiveButton('potter')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+          <a className={`${activeButton === "potter" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Potter Plants'); setActiveButton('potter')}}>
               <span>Potter Plants</span>
-              <span>(12)</span>
+              <span>(2)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "seeds" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Seeds'); setActiveButton('seeds')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "seeds" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Seeds'); setActiveButton('seeds')}}>
               <span>Seeds</span>
-              <span>(65)</span>
+              <span>(3)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "small" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Small Plants'); setActiveButton('small')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "small" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Small Plants'); setActiveButton('small')}}>
               <span>Small Plants</span>
-              <span>(39)</span>
+              <span>(3)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "big" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Big Plants'); setActiveButton('big')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "big" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Big Plants'); setActiveButton('big')}}>
               <span>Big Plants</span>
-              <span>(23)</span>
+              <span>(3)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "succulents" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Succulents'); setActiveButton('succulents')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "succulents" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Succulents'); setActiveButton('succulents')}}>
               <span>Succulents</span>
-              <span>(17)</span>
+              <span>(2)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "terrariums" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Terrariums'); setActiveButton('terrariums')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "terrariums" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Terrariums'); setActiveButton('terrariums')}}>
               <span>Terrariums</span>
-              <span>(19)</span>
+              <span>(5)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "gardening" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Gardening'); setActiveButton('gardening')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "gardening" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Gardening'); setActiveButton('gardening')}}>
               <span>Gardening</span>
-              <span>(13)</span>
+              <span>(2)</span>
             </a>
           </li>
-          <li class="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class={`${activeButton === "accessories" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-23px" : "w-full h-23px inline-flex justify-between"}`} onClick={() => {filterByCategory('Accessories'); setActiveButton('accessories')}}>
+          <li className="flex cursor-pointer justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "accessories" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterByCategory('Accessories'); setActiveButton('accessories')}}>
               <span>Accessories</span>
-              <span>(18)</span>
+              <span>(6)</span>
             </a>
           </li>
         </ul>
       </nav>
     </div>
-    <div class="pb-11">
-      <h3 class="capitalize mb-3.5 text-lg font-bold leading-[88.88889%] text-[#3D3D3D]">
-        Price Range
-      </h3>
-      <div class="mb-6">
-        <div class="filter-price__range relative bg-[#FAFAFA] rounded border border-[#D3D3D3] shadow-[inset_0_1px_1px_#f0f0f0,0_3px_6px_-5px_#bbb]">
-        </div>
-      </div>
-      <div class="mb-4 text-base leading-[106.66667%] flex whitespace-nowrap ">
-        <span class="text-[#3D3D3D] mr-1.5">Price:</span>
-        <span class="font-bold text-[#46A358]" id="price-start">39</span>
-        <span class="font-bold text-[#46A358] mx-1.5">-</span>
-        <span class="font-bold text-[#46A358]" id="price-end">1230</span>
-      </div>
-      <a class="inline-block py-2 px-6 text-white bg-green-600 rounded-full" href="#">
-        Filter
-      </a>
-    </div>
-    <div class="pb-5">
-      <h3 class="capitalize mb-1.5 text-lg font-bold leading-[88.88889%] text-[#3D3D3D]" data-spoiler="">
+    <div className="mb-6 flex flex-col max-w-[226px] gap-y-4 items-start">
+      <h2 className='text-[#3D3D3D] text-[18px] font-[700]'>Price Range</h2>
+            <input
+        className="price-range  "
+        type="range"
+        min="0"
+        max="1000"
+        value={tempPriceRange.min}
+        onChange={handlePriceRangeChange}
+      />
+     <button className='bg-[#46A358] duration-200 rounded-[6px] h-[35px] w-[90px] text-[16px] text-white hover:bg-[#347842]' onClick={handleSortButtonClick}>Filter</button>
+</div>
+    <div className="pb-5">
+      <h3 className="capitalize mb-1.5 text-lg font-bold leading-[88.88889%] text-[#3D3D3D]" data-spoiler="">
         Size
       </h3>
-      <nav class="pl-3">
-        <ul class="text-base leading-[2.66667]">
-          <li class="flex justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class="w-full inline-flex justify-between" onClick={() => filterBySize('Small')}>
+      <nav className="pl-3">
+        <ul className="text-base leading-[2.66667]">
+          <li className="flex justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "smalll" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterBySize('Small'); setActiveButton('smalll')}}>
               <span>Small</span>
-              <span>(119)</span>
+              <span>(8)</span>
             </a>
           </li>
-          <li class="flex justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class="w-full inline-flex justify-between" onClick={() => filterBySize('Medium')}>
+          <li className="flex justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+              <a className={`${activeButton === "medium" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterBySize('Medium'); setActiveButton('medium')}}>
               <span>Medium</span>
-              <span>(86)</span>
+              <span>(7)</span>
             </a>
           </li>
-          <li class="flex justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-            <a class="w-full inline-flex justify-between" onClick={() => filterBySize('Large')}>
+          <li className="flex justify-between text-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+            <a className={`${activeButton === "large" ? "w-full text-[#46A358] inline-flex justify-between duration-200 border-b-[2px] border-[#46A358] h-[40px]" : "w-full h-[40px] inline-flex justify-between"}`} onClick={() => {filterBySize('Large'); setActiveButton('large')}}>
               <span>Large</span>
-              <span>(78)</span>
+              <span>(12)</span>
             </a>
           </li>
         </ul>
       </nav>
     </div>
   </div>
-  <a class="block relative pt-[151.613%] z-1" href="#">
-    <div class="absolute inset-0 flex flex-col items-center">
-      <div class="px-5.5 mb-2.5">
+  <a className="block relative pt-[151.613%] z-1" href="#">
+    <div className="absolute inset-0 flex flex-col items-center">
+      <div className="px-5.5 mb-2.5">
         <picture>
           <source srcSet={SuperSaleTitle} type="image/webp"/>
-          <img class="object-cover" src={SuperSale} alt="sale"/>
+          <img className="object-cover" src={SuperSale} alt="sale"/>
         </picture>
       </div>
-      <span class="font-bold text-[23px] leading-[69.56522%] uppercase text-[#3D3D3D]">UP TO 75% OFF</span>
+      <span className="font-bold text-[[40px]] leading-[69.56522%] uppercase text-[#3D3D3D]">UP TO 75% OFF</span>
     </div>
-    <div class="absolute inset-0 z-[-1]">
+    <div className="absolute inset-0 z-[-1]">
       <picture>
         <source srcSet={SuperSaleBg} type="image/webp"/>
-        <img class="w-full h-full object-cover" src={SuperS} alt="image"/>
+        <img className="w-full h-full object-cover" src={SuperS} alt="image"/>
       </picture>
     </div>
   </a>
@@ -256,19 +246,19 @@ const Home = () => {
               <nav className="">
                 <ul className="flex gap-x-9">
                   <li >
-                     <button className={`${activeButton === 'all' ? ' text-[15px] text-[#46A358] duration-200 border-b-[2px] border-[#46A358] h-23px' : 'text-[15px] h-23px'}`} onClick={() => {
+                     <button className={`${activeButton === 'all' ? ' text-[15px] text-[#46A358] duration-200 border-b-[2px] border-[#46A358] h-[40px]' : 'text-[15px] h-[40px]'}`} onClick={() => {
     filterProducts('all');
     setActiveButton('all');
   }}>All Plants</button>
                   </li>
                   <li>
-                     <button className={`${activeButton === 'new' ? ' text-[15px] text-[#46A358] duration-200 border-b-[2px] border-[#46A358] h-23px' : 'text-[15px] h-23px'}`} onClick={() => {
+                     <button className={`${activeButton === 'new' ? ' text-[15px] text-[#46A358] duration-200 border-b-[2px] border-[#46A358] h-[40px]' : 'text-[15px] h-[40px]'}`} onClick={() => {
     filterProducts('new');
     setActiveButton('new');
   }}>New arrivales</button>
                   </li>
                   <li>
-                     <button className={`${activeButton === 'sale' ? ' text-[15px] text-[#46A358] duration-200 border-b-[2px] border-[#46A358] h-23px' : 'text-[15px] h-23px'}`} onClick={() => {
+                     <button className={`${activeButton === 'sale' ? ' text-[15px] text-[#46A358] duration-200 border-b-[2px] border-[#46A358] h-[40px]' : 'text-[15px] h-[40px]'}`} onClick={() => {
     filterProducts('sale');
     setActiveButton('sale');
   }}>Sale</button>
