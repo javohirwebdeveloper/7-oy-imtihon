@@ -28,7 +28,6 @@ const ProductCheckout = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [errors, setErrors] = useState({});
-
   const shippingCost = 16.0;
   const subtotal = cartItems.reduce(
     (total, item) => total + parseFloat(item.price) * item.quantity,
@@ -37,16 +36,13 @@ const ProductCheckout = () => {
   const isCouponApplied = coupon === "Javohir";
   const discountAmount = isCouponApplied ? subtotal * 0.05 : 0;
   const total = subtotal - discountAmount + shippingCost;
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setBillingDetails({ ...billingDetails, [name]: value });
   };
-
   const handleCouponChange = (e) => {
     setCoupon(e.target.value);
   };
-
   const applyCoupon = () => {
     if (isCouponApplied) {
       setDiscount(discountAmount);
@@ -55,11 +51,9 @@ const ProductCheckout = () => {
       setDiscount(0);
     }
   };
-
   const calculateTotal = (price, quantity) => {
     return price * quantity;
   };
-
   const validateForm = () => {
     let formErrors = {};
     if (!billingDetails.firstName)
@@ -75,14 +69,12 @@ const ProductCheckout = () => {
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;
   };
-
   const handlePlaceOrder = () => {
     if (validateForm() && paymentMethod) {
       setIsOrderPlaced(true);
       setShowOrderDetails(true);
     }
   };
-
   useEffect(() => {
     if (showConfirmation) {
       setTimeout(() => {
@@ -91,7 +83,6 @@ const ProductCheckout = () => {
       }, 3000);
     }
   }, [showOrderDetails, navigate]);
-
   useEffect(() => {
     if (showOrderDetails) {
       document.body.style.overflow = "hidden";
@@ -102,7 +93,6 @@ const ProductCheckout = () => {
       document.body.style.overflow = "visible";
     };
   }, [showOrderDetails]);
-
   return (
     <div className="_container mx-auto">
       <h2 className="text-[15px] mt-[114px] font-[400] text-[#3D3D3D]">
@@ -292,72 +282,58 @@ const ProductCheckout = () => {
         </div>
         <div className="w-[389px] details">
           <div className="your-order">
-            <div className="table-container max-h-[250px] w-full overflow-y-auto ">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-2">Product</th>
-                    <th className="text-left p-2">‎ </th>
-                    <th className="text-right p-2">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cartItems.length > 0 ? (
-                    cartItems.map((item) => (
-                      <tr key={item.id} className="">
-                        <td className="p-2 flex items-center">
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-12 h-12 mr-2"
-                          />
-                          <span>{item.title}</span>
-                        </td>
-                        <td className="p-2">(x {item.quantity})</td>
-                        <td className="p-2 text-right">
-                          $
-                          {calculateTotal(item.price, item.quantity).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className="text-center py-4">
-                        Buyurtma berish uchun kerakli gul tanlang
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-2">Product</th>
+                  <th className="text-left p-2">‎ </th>
+                  <th className="text-right p-2">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody className=" h-[230px] w-full overflow-scroll block">
+                {cartItems.length > 0 ? (
+                  cartItems.map((item) => (
+                    <tr key={item.id} className="border-b">
+                      <td className="p-2 flex items-center">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-12 h-12 mr-2"
+                        />
+                        <span>{item.title}</span>
+                      </td>
+                      <td className="p-2">(x {item.quantity})</td>
+                      <td className="p-2 text-right">
+                        ${calculateTotal(item.price, item.quantity).toFixed(2)}
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4">
+                      Buyurtma berish uchun kerakli gul tanlang
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
           {cartItems.length > 0 ? (
             <div className="cart-totals mt-4 p-4 border-t border-[#EAEAEA]">
               <div className="subtotal flex justify-between">
-                <span>Subtotal:</span>
-                <span className="text-[#3D3D3D] text-[16px] font-[500]">
-                  ${subtotal.toFixed(2)}
-                </span>
+                <span>Subtotal:</span> <span>${subtotal.toFixed(2)}</span>
               </div>
               {discount > 0 && (
                 <div className="coupon-discount flex justify-between">
                   <span>Coupon Discount:</span>
-                  <span>(-) {discount.toFixed(2)}.00</span>
+                  <span>-${discount.toFixed(2)}</span>
                 </div>
               )}
-              <div className="shipping flex justify-between mt-[15px]">
-                <span>Shipping:</span>
-                <span className="text-[#3D3D3D] text-[16px] font-[500]">
-                  ${shippingCost.toFixed(2)}
-                </span>
+              <div className="shipping flex justify-between">
+                <span>Shipping:</span> <span>${shippingCost.toFixed(2)}</span>
               </div>
-              <div className="total flex justify-between font-bold  mt-[15px]">
-                <span className="text-[#3D3D3D] text-[16px] font-[700]">
-                  Total:
-                </span>
-                <span className="text-[#46A358] text-[18px] font-[700]">
-                  ${total.toFixed(2)}
-                </span>
+              <div className="total flex justify-between font-bold">
+                <span>Total:</span> <span>${total.toFixed(2)}</span>
               </div>
               <h2 className="mt-4 text-[#3D3D3D] text-[17px] font-[700]">
                 Payment Method
@@ -411,9 +387,9 @@ const ProductCheckout = () => {
           )}
         </div>
         {showOrderDetails && (
-          <div className="fixed inset-0 order-modal bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center overflow-hidden z-50">
-            <div className="bg-white  w-[578px] h-[800px] overflow-auto rounded-lg shadow-lg relative">
-              <div className=" bg-[#46A3580F] h-[156px] flex flex-col items-center justify-center">
+          <div className="fixed order-modal bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
+            <div className="bg-white w-[578px] h-[800px] rounded-lg shadow-lg relative">
+              <div className="bg-[#46A3580F] h-[156px] flex flex-col items-center justify-center">
                 <img src={ThankYou} alt="" className="w-[80px]" />
                 <h2 className="text-[16px] font-[400] text-[#727272] mt-[16px]">
                   Your order has been received
@@ -448,11 +424,11 @@ const ProductCheckout = () => {
                     </div>
                   </div>
                 </div>
-                <div className=" mt-[18px] px-8">
-                  <h2 className=" text-[#3D3D3D] text-[15px] font-[500] ">
+                <div className="mt-[18px] px-8">
+                  <h2 className="text-[#3D3D3D] text-[15px] font-[500]">
                     Order Details
                   </h2>
-                  <div className="table-container max-h-[250px] w-full overflow-y-auto ">
+                  <div className="table-container">
                     <table className="w-full border-collapse">
                       <thead>
                         <tr className="border-b">
@@ -467,9 +443,9 @@ const ProductCheckout = () => {
                           </th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="max-h-[315px] overflow-y-auto">
                         {cartItems.map((item) => (
-                          <tr key={item.id} className="">
+                          <tr key={item.id} className="flex items-center">
                             <td className="p-2 flex items-center">
                               <img
                                 src={item.image}
@@ -496,7 +472,6 @@ const ProductCheckout = () => {
                       </tbody>
                     </table>
                   </div>
-
                   <div className="flex justify-end w-full mt-[20px]">
                     <div className="w-[300px]">
                       <div className="shipping w-full flex justify-between">
@@ -518,7 +493,7 @@ const ProductCheckout = () => {
                     </div>
                   </div>
                   <div className="w-full flex flex-col items-center mt-[18px]">
-                    <h2 className="text-center text-[14px] font-[400] max-w-[483px]">
+                    <h2 className="text-center">
                       Your order is currently being processed. You will receive
                       an order confirmation email shortly with the expected
                       delivery date for your items.
@@ -565,5 +540,4 @@ const ProductCheckout = () => {
     </div>
   );
 };
-
 export default ProductCheckout;

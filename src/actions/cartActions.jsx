@@ -25,3 +25,8 @@ export const applyDiscount = (discount) => {
     payload: discount,
   };
 };
+export const clearCart = () => {
+  return {
+    type: "CLEAR_CART",
+  };
+};

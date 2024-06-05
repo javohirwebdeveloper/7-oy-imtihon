@@ -108,11 +108,10 @@ input[type="range"]::-webkit-slider-runnable-track {
   height: 0.5rem;
 }
 
-/* slider thumb */
 input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; /* Override default look */
+  -webkit-appearance: none;
   appearance: none;
-  margin-top: -4px; /* Centers thumb on the track */
+  margin-top: -4px; 
   background-color: #46A358;
   border-radius: 0.5rem;
   height: 1rem;
@@ -129,10 +128,9 @@ input[type="range"]::-moz-range-track {
   height: 0.5rem;
 }
 
-/* slider thumb */
 input[type="range"]::-moz-range-thumb {
   background-color: #46A358;
-  border: none; /*Removes extra border that FF applies*/
+  border: none; 
   border-radius: 0.5rem;
   height: 1rem;
   width: 1rem;
@@ -141,4 +139,20 @@ input[type="range"]::-moz-range-thumb {
 input[type="range"]:focus::-moz-range-thumb{
   outline: 3px solid #46A358;
   outline-offset: 0.125rem;
+}
+.your-order .table-container::-webkit-scrollbar {
+  display: none;
+}
+.order-details-modal .table-container::-webkit-scrollbar {
+  display: none; /* This will hide the scrollbar in Webkit browsers like Chrome and Safari */
+}
+
+.order-details-modal .table-container {
+  -ms-overflow-style: none;  /* This will hide the scrollbar in Internet Explorer/Edge */
+  scrollbar-width: none;  /* This will hide the scrollbar in Firefox */
+}
+
+.order-details-modal .table-container {
+  max-height: 250px; /* Fixed height for the container */
+  overflow-y: auto; /* Enables vertical scrolling */
 }

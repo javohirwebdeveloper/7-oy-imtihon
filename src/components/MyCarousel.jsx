@@ -77,13 +77,13 @@ const MyCarousel = () => {
 };
 
 const indicatorStyles = {
-  background: '#808080',
-  width: 8,
-  height: 8,
-  display: 'inline-block',
-  margin: '0 8px',
-  borderRadius: '50%',
-  cursor: 'pointer',
+  background: "#46A3584D",
+  width: 10,
+  height: 10,
+  display: "inline-block",
+  margin: "0 4px",
+  borderRadius: "50%",
+  cursor: "pointer",
 };
 
 export default MyCarousel;

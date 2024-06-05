@@ -5,6 +5,8 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Product from "./pages/Product";
 import './index.css'
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Shop from "./pages/Shop";
 import { Provider } from 'react-redux';
 import store from './store';
