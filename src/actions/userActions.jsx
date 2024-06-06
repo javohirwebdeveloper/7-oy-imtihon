@@ -1,4 +1,3 @@
-// userActions.jsx
 import { jwtDecode } from "jwt-decode";
 
 export const loginUser = (user) => {
