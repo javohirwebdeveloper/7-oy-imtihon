@@ -144,15 +144,22 @@ input[type="range"]:focus::-moz-range-thumb{
   display: none;
 }
 .order-details-modal .table-container::-webkit-scrollbar {
-  display: none; /* This will hide the scrollbar in Webkit browsers like Chrome and Safari */
+  display: none; 
 }
 
 .order-details-modal .table-container {
-  -ms-overflow-style: none;  /* This will hide the scrollbar in Internet Explorer/Edge */
-  scrollbar-width: none;  /* This will hide the scrollbar in Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;  
 }
 
 .order-details-modal .table-container {
-  max-height: 250px; /* Fixed height for the container */
-  overflow-y: auto; /* Enables vertical scrolling */
+  max-height: 250px;
+  overflow-y: auto; 
+}
+
+.nav-footer {
+  background-image: url(./assets/Vector.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }

@@ -12,22 +12,24 @@ import { Provider } from 'react-redux';
 import store from './store';
 import ProductCart from "./pages/ProductCart";
 import ProductCheckout from "./pages/ProductCheckout";
+import Favorites from "./pages/Favorites";
 const App = () => {
   return (
     <Provider store={store}>
-    <Router>
-      <div className="wrapper ">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/product/:id" element={<Product />} />
-          <Route path="/shop" element={<Shop/>}/>
-          <Route path="/cart" element={<ProductCart/>}/>
-          <Route path="/checkout" element={<ProductCheckout/>}/>
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+      <Router>
+        <div className="wrapper ">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/product/:id" element={<Product />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/cart" element={<ProductCart />} />
+            <Route path="/checkout" element={<ProductCheckout />} />
+            <Route path="/favorites" element={<Favorites />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
     </Provider>
   );
 };

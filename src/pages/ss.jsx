@@ -1,543 +1,220 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { SiTicktick } from "react-icons/si";
-import { clearCart } from "../actions/cartActions";
-import ThankYou from "../assets/thank-you.svg";
-const ProductCheckout = () => {
-  const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cartItems);
-  const navigate = useNavigate();
-  const [billingDetails, setBillingDetails] = useState({
-    firstName: "",
-    lastName: "",
-    country: "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
-    email: "",
-    phone: "",
-    orderNotes: "",
-  });
-  const [coupon, setCoupon] = useState("");
-  const [discount, setDiscount] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [showOrderDetails, setShowOrderDetails] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
-  const [errors, setErrors] = useState({});
-  const shippingCost = 16.0;
-  const subtotal = cartItems.reduce(
-    (total, item) => total + parseFloat(item.price) * item.quantity,
-    0
-  );
-  const isCouponApplied = coupon === "Javohir";
-  const discountAmount = isCouponApplied ? subtotal * 0.05 : 0;
-  const total = subtotal - discountAmount + shippingCost;
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setBillingDetails({ ...billingDetails, [name]: value });
-  };
-  const handleCouponChange = (e) => {
-    setCoupon(e.target.value);
-  };
-  const applyCoupon = () => {
-    if (isCouponApplied) {
-      setDiscount(discountAmount);
-    } else {
-      alert(`Noto'g'ri kupon kodi!`);
-      setDiscount(0);
-    }
-  };
-  const calculateTotal = (price, quantity) => {
-    return price * quantity;
-  };
-  const validateForm = () => {
-    let formErrors = {};
-    if (!billingDetails.firstName)
-      formErrors.firstName = "First Name is required";
-    if (!billingDetails.lastName) formErrors.lastName = "Last Name is required";
-    if (!billingDetails.country) formErrors.country = "Country is required";
-    if (!billingDetails.address) formErrors.address = "Address is required";
-    if (!billingDetails.city) formErrors.city = "City is required";
-    if (!billingDetails.state) formErrors.state = "State is required";
-    if (!billingDetails.zip) formErrors.zip = "Zip is required";
-    if (!billingDetails.email) formErrors.email = "Email is required";
-    if (!billingDetails.phone) formErrors.phone = "Phone Number is required";
-    setErrors(formErrors);
-    return Object.keys(formErrors).length === 0;
-  };
-  const handlePlaceOrder = () => {
-    if (validateForm() && paymentMethod) {
-      setIsOrderPlaced(true);
-      setShowOrderDetails(true);
-    }
-  };
-  useEffect(() => {
-    if (showConfirmation) {
-      setTimeout(() => {
-        setShowConfirmation(false);
-        navigate("/");
-      }, 3000);
-    }
-  }, [showOrderDetails, navigate]);
-  useEffect(() => {
-    if (showOrderDetails) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "visible";
-    }
-    return () => {
-      document.body.style.overflow = "visible";
-    };
-  }, [showOrderDetails]);
+import React from "react";
+
+const ss = () => {
   return (
-    <div className="_container mx-auto">
-      <h2 className="text-[15px] mt-[114px] font-[400] text-[#3D3D3D]">
-        <span className="font-[700]">Home</span> / Shop / Checkout
+    <div className="wrapper  mt-[114px]">
+      <h2 className="text-[15px] font-[400] text-[#3D3D3D] ">
+        <NavLink to="/">
+          <span className="font-[700]">Home</span>
+        </NavLink>
+        / Shop
       </h2>
-      <h2 className="text-[#3D3D3D] text-[17px] font-[700] mt-[36px] ">
-        Billing Address
-      </h2>
-      <div className="grid grid-cols-2 gap-x-[200px]">
-        <div className="billing-address w-[600px] mt-[18px] grid grid-cols-2 gap-x-[15px] gap-y-[20px]">
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              First Name
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.firstName ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="firstName"
-              value={billingDetails.firstName}
-              onChange={handleInputChange}
-            />
-            {errors.firstName && (
-              <span className="text-red-500">{errors.firstName}</span>
+      <div className="grid grid-cols-2 mt-[43px]">
+        <div className="max-w-[603px] w-full gap-x-[46px] grid grid-cols-2 md:w-1/2">
+          <div className="flex flex-col items-center">
+            {[
+              product.image,
+              product.image2,
+              product.image3,
+              product.image4,
+            ].map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt={product.title}
+                onClick={() => handleImageSelect(img)}
+                className={`cursor-pointer m-1 duration-200 h-[100px] w-[100px] ${
+                  selectedImage === img
+                    ? "border-2 border-[#46A358]"
+                    : "border-2 border-transparent"
+                }`}
+              />
+            ))}
+          </div>
+          <div className="flex justify-center w-[404px]">
+            {isZoomed ? (
+              <TransformWrapper>
+                <TransformComponent>
+                  <img
+                    src={selectedImage}
+                    alt="Selected Product"
+                    className="w-[404px] h-[404px]"
+                  />
+                </TransformComponent>
+              </TransformWrapper>
+            ) : (
+              <img
+                src={selectedImage}
+                alt="Selected Product"
+                className="w-[404px] h-[404px]"
+              />
             )}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              Last Name
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.lastName ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="lastName"
-              value={billingDetails.lastName}
-              onChange={handleInputChange}
-            />
-            {errors.lastName && (
-              <span className="text-red-500">{errors.lastName}</span>
-            )}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              Country / Region
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.country ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="country"
-              value={billingDetails.country}
-              onChange={handleInputChange}
-            />
-            {errors.country && (
-              <span className="text-red-500">{errors.country}</span>
-            )}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              Town / City
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.city ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="city"
-              value={billingDetails.city}
-              onChange={handleInputChange}
-            />
-            {errors.city && <span className="text-red-500">{errors.city}</span>}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              Street Address
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.address ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="address"
-              value={billingDetails.address}
-              onChange={handleInputChange}
-            />
-            {errors.address && (
-              <span className="text-red-500">{errors.address}</span>
-            )}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              &nbsp;
-            </p>
-            <input
-              type="text"
-              className="pl-[10px] outline-none w-[280px] h-[36px] border border-[#EAEAEA] rounded-[3px]"
-              name="address2"
-              value={billingDetails.address2}
-              onChange={handleInputChange}
-            />
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              State
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.state ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="state"
-              value={billingDetails.state}
-              onChange={handleInputChange}
-            />
-            {errors.state && (
-              <span className="text-red-500">{errors.state}</span>
-            )}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              Zip
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.zip ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="zip"
-              value={billingDetails.zip}
-              onChange={handleInputChange}
-            />
-            {errors.zip && <span className="text-red-500">{errors.zip}</span>}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              Email address
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.email ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="email"
-              value={billingDetails.email}
-              onChange={handleInputChange}
-            />
-            {errors.email && (
-              <span className="text-red-500">{errors.email}</span>
-            )}
-          </form>
-          <form>
-            <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-              Phone Number
-            </p>
-            <input
-              type="text"
-              className={`pl-[10px] outline-none w-[280px] h-[36px] border ${
-                errors.phone ? "border-red-500" : "border-[#EAEAEA]"
-              } rounded-[3px]`}
-              name="phone"
-              value={billingDetails.phone}
-              onChange={handleInputChange}
-            />
-            {errors.phone && (
-              <span className="text-red-500">{errors.phone}</span>
-            )}
-          </form>
-          <div>
-            <form>
-              <p className="mb-[8px] text-[14px] font-[400] text-[#3D3D3D]">
-                Order notes (optional)
-              </p>
-              <textarea
-                rows="4"
-                cols="50"
-                className="border outline-none w-[580px] h-[80px] pl-[10px] rounded-[3px]"
-                name="orderNotes"
-                value={billingDetails.orderNotes}
-                onChange={handleInputChange}
-              ></textarea>
-            </form>
+            <button
+              onClick={() => setIsZoomed(!isZoomed)}
+              className={`h-[30px] w-[30px] rounded-[50px] top-0 right-0 p-2 ${
+                isZoomed ? "text-green-500 bg-gray-100" : "bg-gray-100"
+              }`}
+            >
+              <FiSearch />
+            </button>
           </div>
         </div>
-        <div className="w-[389px] details">
-          <div className="your-order">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left p-2">Product</th>
-                  <th className="text-left p-2">‎ </th>
-                  <th className="text-right p-2">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody className=" h-[230px] w-full overflow-scroll block">
-                {cartItems.length > 0 ? (
-                  cartItems.map((item) => (
-                    <tr key={item.id} className="border-b">
-                      <td className="p-2 flex items-center">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-12 h-12 mr-2"
-                        />
-                        <span>{item.title}</span>
-                      </td>
-                      <td className="p-2">(x {item.quantity})</td>
-                      <td className="p-2 text-right">
-                        ${calculateTotal(item.price, item.quantity).toFixed(2)}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="text-center py-4">
-                      Buyurtma berish uchun kerakli gul tanlang
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          {cartItems.length > 0 ? (
-            <div className="cart-totals mt-4 p-4 border-t border-[#EAEAEA]">
-              <div className="subtotal flex justify-between">
-                <span>Subtotal:</span> <span>${subtotal.toFixed(2)}</span>
-              </div>
-              {discount > 0 && (
-                <div className="coupon-discount flex justify-between">
-                  <span>Coupon Discount:</span>
-                  <span>-${discount.toFixed(2)}</span>
-                </div>
-              )}
-              <div className="shipping flex justify-between">
-                <span>Shipping:</span> <span>${shippingCost.toFixed(2)}</span>
-              </div>
-              <div className="total flex justify-between font-bold">
-                <span>Total:</span> <span>${total.toFixed(2)}</span>
-              </div>
-              <h2 className="mt-4 text-[#3D3D3D] text-[17px] font-[700]">
-                Payment Method
+        <div className="w-[574px] ml-[52px] md:w-1/2 flex flex-col justify-start">
+          <div className=" mb-[15px] border-b-[1px] border-[#46A35880] pb-[11px] flex w-[574px] items-end justify-between">
+            <div className="max-w-[250px] w-full">
+              <h2 className="text-2xl font-bold text-[#3D3D3D] h-[16px] mb-[21px]">
+                {product.title}
               </h2>
-              <div className="payment-methods mt-2">
-                <label className="border p-[11px] flex rounded-[3px]">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="Paypal"
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                  />
-                  <span className="ml-2">
-                    <img
-                      src="https://s3-alpha-sig.figma.com/img/1e46/0c89/ee17b2b09a69f96d2552ed3b0b04ac05?Expires=1718582400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=IrOyJJPujrqQN6Tp5Z7wd-yRj0CAz0AxUv3TpFojcK2jeUdM7KlS8iQZqVV~z-rmUQ9WtyFUkjCiFwTkznHC8kooaspmZFpMdSOqZQCJd6uLcaqF7ux2~Xtb4rBrSyMBMrgqVaxPjhCJzP7HhXC8QSWoYDX3arH6RZ0pj4VQOrWsyQEq1AkqFvtYl0LTRXcr9bbqg2YOlfXjGKfVBLk8gHR-rwYj5DnYbj70JCRqo2Uf817V7xiwkHNaOWOpige2yQnT1qzo4RcP7WMxaNYeFVfA2ESoagsdveoICno3vrAoIuTF7OtKEDgHUQvuBuckjcqAchzC3l3RnjaV8-~ebw__"
-                      alt=""
-                    />
-                  </span>
-                </label>
-                <label className="border p-[11px] flex rounded-[3px] mt-2">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="DirectBankTransfer"
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                  />
-                  <span className="ml-2">Direct Bank Transfer</span>
-                </label>
-                <label className="border p-[11px] flex rounded-[3px] mt-2">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="CashOnDelivery"
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                  />
-                  <span className="ml-2">Cash on Delivery</span>
-                </label>
-              </div>
-              <button
-                onClick={handlePlaceOrder}
-                disabled={!paymentMethod}
-                className={`place-order-button mt-4 rounded-[3px] w-full p-2 text-white ${
-                  paymentMethod ? "bg-[#46A358]" : "bg-gray-300"
+              <p className="font-[700] mb-4 text-[#46A358] text-[22px] h-[16px] ">
+                ${product.price}
+              </p>
+            </div>
+            <div className="flex gap-x-[11px] items-end">
+              <StarRatings
+                rating={product.rating}
+                starDimension="18px"
+                starRatedColor="#FFAC0C"
+                starSpacing="3px"
+              />
+              <h2 className="text-[#3D3D3D] text-[15px] font-[400] ">
+                19 Customer Review
+              </h2>
+            </div>
+          </div>
+          <h2 className=" text-[#3D3D3D] text-[15px] font-[500] ">
+            Short Description:
+          </h2>
+          <p className=" w-[573px] text-[14px] font-[400] ">The ...</p>
+          <div className="mt-[24px] mb-[23px]">
+            <h2 className="text-[#3D3D3D] text-[15px] font-[500] ">Size:</h2>
+            <div className="flex mt-[11px] gap-x-[10px]">
+              <div
+                className={`${
+                  product.size === "Small"
+                    ? "h-[28px] flex justify-center items-center text-[18px] w-[28px] rounded-[50%] border-[1px] border-[#46A358] text-[#46A358]"
+                    : "h-[28px] flex justify-center items-center text-[14px] w-[28px] rounded-[50%] border-[1px] border-[#EAEAEA] text-[#727272]"
                 } `}
               >
-                Place Order
-              </button>
-            </div>
-          ) : (
-            ""
-          )}
-        </div>
-        {showOrderDetails && (
-          <div className="fixed order-modal bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
-            <div className="bg-white w-[578px] h-[800px] rounded-lg shadow-lg relative">
-              <div className="bg-[#46A3580F] h-[156px] flex flex-col items-center justify-center">
-                <img src={ThankYou} alt="" className="w-[80px]" />
-                <h2 className="text-[16px] font-[400] text-[#727272] mt-[16px]">
-                  Your order has been received
-                </h2>
-                <button
-                  onClick={() => setShowOrderDetails(false)}
-                  className="absolute top-1 right-3 text-2xl font-bold"
-                >
-                  ×
-                </button>
+                <h2 className=" font-[500]">S</h2>
               </div>
-              <div className="order-details-modal">
-                <div className="h-[65px] flex border-b">
-                  <div className="flex px-8 items-center">
-                    <div className="w-[106px] h-[35px] border-r flex flex-col items-start">
-                      <h2 className="text-[14px] font-[400]">Order Number</h2>
-                      <p className="text-[15px] font-[700]">19586687</p>
-                    </div>
-                    <div className="w-[136px] h-[35px] border-r flex flex-col items-center">
-                      <h2 className="text-[14px] font-[400]">Date</h2>
-                      <p className="text-[15px] font-[700]">15 Sep, 2021</p>
-                    </div>
-                    <div className="w-[104px] h-[35px] border-r flex flex-col items-center">
-                      <h2 className="text-[14px] font-[400]">Total</h2>
-                      <p className="text-[15px] font-[700]">
-                        ${total.toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="w-[139px] h-[35px] flex flex-col items-end">
-                      <h2 className="text-[14px] font-[400]">Payment Method</h2>
-                      <p className="text-[15px] font-[700]">Cash on delivery</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-[18px] px-8">
-                  <h2 className="text-[#3D3D3D] text-[15px] font-[500]">
-                    Order Details
-                  </h2>
-                  <div className="table-container">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left p-2 text-[#3D3D3D] text-[16px] text-[500]">
-                            Product
-                          </th>
-                          <th className="text-left p-2 text-[#3D3D3D] text-[16px] text-[500]">
-                            Qty
-                          </th>
-                          <th className="text-right p-2 text-[#3D3D3D] text-[16px] text-[500]">
-                            Subtotal
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="max-h-[315px] overflow-y-auto">
-                        {cartItems.map((item) => (
-                          <tr key={item.id} className="flex items-center">
-                            <td className="p-2 flex items-center">
-                              <img
-                                src={item.image}
-                                alt={item.title}
-                                className="w-12 h-12 mr-2"
-                              />
-                              <div>
-                                <span className="text-[#3D3D3D] font-[500]">
-                                  {item.title}
-                                </span>
-                                <h2>SKU: {item.sku}</h2>
-                              </div>
-                            </td>
-                            <td className="p-2">(x {item.quantity})</td>
-                            <td className="p-2 text-right">
-                              $
-                              {calculateTotal(
-                                item.price,
-                                item.quantity
-                              ).toFixed(2)}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="flex justify-end w-full mt-[20px]">
-                    <div className="w-[300px]">
-                      <div className="shipping w-full flex justify-between">
-                        <span className="text-[15px] text-[#3D3D3D]">
-                          Shipping:
-                        </span>
-                        <span className="text-[18px] font-[500] text-[#3D3D3D]">
-                          ${shippingCost.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="total mt-[25px] w-full flex justify-between font-bold">
-                        <span className="text-[18px] font-[500] text-[#3D3D3D]">
-                          Total:
-                        </span>
-                        <span className="text-[18px] font-[700] text-[#46A358]">
-                          ${total.toFixed(2)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-full flex flex-col items-center mt-[18px]">
-                    <h2 className="text-center">
-                      Your order is currently being processed. You will receive
-                      an order confirmation email shortly with the expected
-                      delivery date for your items.
-                    </h2>
-                    <button
-                      className="track-your-order h-[45px] rounded-[5px] w-[162px] mt-[49px] p-2 bg-[#46A358] text-white"
-                      onClick={() => {
-                        setShowOrderDetails(false);
-                        dispatch(clearCart());
-                        setShowConfirmation(true);
-                      }}
-                    >
-                      Track your order
-                    </button>
-                  </div>
-                </div>
+              <div
+                className={`${
+                  product.size === "Medium"
+                    ? "h-[28px] flex justify-center items-center text-[18px] w-[28px] rounded-[50%] border-[1px] border-[#46A358] text-[#46A358]"
+                    : "h-[28px] flex justify-center items-center text-[14px] w-[28px] rounded-[50%] border-[1px] border-[#EAEAEA] text-[#727272]"
+                } `}
+              >
+                <h2 className=" font-[500]">M</h2>
+              </div>
+              <div
+                className={`${
+                  product.size === "Large"
+                    ? "h-[28px] flex justify-center items-center text-[18px] w-[28px] rounded-[50%] border-[1px] border-[#46A358] text-[#46A358]"
+                    : "h-[28px] flex justify-center items-center text-[14px] w-[28px] rounded-[50%] border-[1px] border-[#EAEAEA] text-[#727272]"
+                } `}
+              >
+                <h2 className=" font-[500]">L</h2>
               </div>
             </div>
           </div>
-        )}
-
-        <div
-          className={
-            showConfirmation
-              ? "confirmation-toast visible flex flex-col justify-between top-20 fixed bg-white w-[400px] shadow-[0px_0px_8px_1px_#00000024] rounded-[6px] h-[60px] right-2"
-              : "invisible"
-          }
-        >
-          <h2 className="flex items-center text-[15px] space-x-2 text-[#46A358] font-[700] p-3">
-            <span className="text-[20px]">
-              <SiTicktick />
-            </span>
-            <span>Congratulations, your order has been confirmed!</span>
-          </h2>
-          <div
-            className={
-              showConfirmation
-                ? "w-0 h-[3px] show-time left-0 duration-[3s] bottom-0 bg-[#46A358]"
-                : "w-full h-[3px] left-0 bg-[#46A358] bottom-0"
-            }
-          ></div>
+          <div className="flex gap-x-[26px] items-center h-[40px]">
+            <div className="flex mt-[23px] gap-x-[22px] items-center mb-4">
+              <button
+                onClick={() => handleQuantityChange(-1)}
+                className="h-[38px] w-[33px] rounded-[29px] flex items-center justify-center hover:bg-[#357141cc] bg-[#46A358CC] text-[15px] text-white "
+              >
+                <FaMinus />
+              </button>
+              <span className="text-[20px] font-[400] text-[#3D3D3D]">
+                {quantity}
+              </span>
+              <button
+                onClick={() => handleQuantityChange(1)}
+                className="h-[38px] w-[33px] rounded-[29px] flex items-center justify-center hover:bg-[#357141cc] bg-[#46A358CC] text-[15px] text-white "
+              >
+                <FaPlus />
+              </button>
+            </div>
+            <div className="flex w-[320px] gap-x-[10px]">
+              <button
+                onClick={handleBuyNow}
+                className="bg-[#46A358] text-white hover:bg-white hover:text-[#46A358] border-[1px] border-transparent hover:border-[#46A358] duration-200 h-[40px] w-[130px] rounded-[6px] text-[14px] font-[700]"
+              >
+                BUY NOW
+              </button>
+              <button
+                onClick={handleAddToCart}
+                className="hover:bg-[#46A358] hover:text-white bg-transparent text-[#46A358] border-[1px] hover:border-transparent border-[#46A358] duration-200 h-[40px] w-[130px] rounded-[6px] text-[14px] font-[700]"
+              >
+                ADD TO CART
+              </button>
+              <button
+                onClick={() => {
+                  if (!heart) {
+                    setHeart(true);
+                  } else {
+                    setHeart(false);
+                  }
+                }}
+                className={` h-[40px] w-[40px] rounded-[6px] text-[#46A358] border-[1px] border-[#46A358] text-[25px] flex items-center justify-center `}
+              >
+                {heart ? <IoMdHeart /> : <IoMdHeartEmpty />}
+              </button>
+            </div>
+          </div>
+          <div className="mt-[26px] text-[15px]">
+            <h2 className="text-[#5d5c5c]">
+              <span className="text-[#969696]">SKU:</span> {product.sku}
+            </h2>
+            <h2 className="text-[#5d5c5c]">
+              <span className="text-[#969696]">Categories:</span>
+              {product.category}
+            </h2>
+            <h2 className="text-[#5d5c5c]">
+              <span className="text-[#969696]">Tags:</span> Home, Garden, Plants
+            </h2>
+          </div>
+          <div className="flex mt-[18px] text-[#3D3D3D] gap-x-[16px] font-[500]">
+            <h2>Share this products:</h2>
+            <div className="flex items-center gap-x-[20px] ">
+              <img src={ShareF} alt="" />
+              <img src={ShareT} alt="" />
+              <img src={ShareL} alt="" />
+              <img src={ShareM} alt="" />
+            </div>
+          </div>
         </div>
+      </div>
+      <div className="flex mt-[92px] border-b-[1px] border-[#46A35880] gap-x-[30px] h-[29px] w-full">
+        <h2 className="font-[700] text-[17px] h-[29px] border-b-[2px] border-[#46A358] text-[#46A358] ">
+          Product Description
+        </h2>
+        <h2 className=" font-[400] text-[17px] h-[29px]">Reviews (19)</h2>
+      </div>
+      <p className="max-w-[1199px] mt-[18px] text-[14px]">The ...</p>
+      <p className="max-w-[1199px] mt-[24px] text-[14px]">Pellentesque ...</p>
+      <h2 className="text-[14px] text-[#3D3D3D] font-[700] mt-[18px]">
+        Living Room:
+      </h2>
+      <p className="max-w-[1199px] text-[14px]">The ...</p>
+      <h2 className="text-[14px] text-[#3D3D3D] font-[700] mt-[18px]">
+        Dining Room:
+      </h2>
+      <p className="max-w-[1199px] text-[14px]">The ...</p>
+      <h2 className="text-[14px] text-[#3D3D3D] font-[700] mt-[18px]">
+        Office:
+      </h2>
+      <p className="max-w-[1199px] text-[14px]">The ...</p>
+      <div className="max-w-[1199px] w-full border-b-[1px] border-[#46A35880] pb-[12px]">
+        <h2 className="mt-[127px] text-[17px] font-[700] text-[#46A358]">
+          Releted Products
+        </h2>
+      </div>
+      <div className="max-w-[1199px] h-[400px] mt-[44px] mb-[100px]">
+        <Carousel products={relatedProducts} />
       </div>
     </div>
   );
 };
-export default ProductCheckout;
+
+export default ss;

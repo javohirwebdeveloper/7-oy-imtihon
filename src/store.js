@@ -1,6 +1,7 @@
+// store.jsx
 import { createStore } from 'redux';
-import cartReducer from './reducers/cartReducer';
+import rootReducer from './reducers/rootReducer';
 
-const store = createStore(cartReducer);
+const store = createStore(rootReducer);
 
 export default store;

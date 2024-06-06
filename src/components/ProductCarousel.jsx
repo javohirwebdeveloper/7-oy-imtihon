@@ -4,9 +4,22 @@ import { Link } from "react-router-dom";
 const Carousel = ({ products }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchPosition, setTouchPosition] = useState(null);
+  const [visibleCards, setVisibleCards] = useState(5);
   const carouselRef = useRef();
 
-  const visibleCards = 5;
+  const updateVisibleCards = () => {
+    if (window.innerWidth < 768) {
+      setVisibleCards(3);
+    } else {
+      setVisibleCards(5);
+    }
+  };
+
+  useEffect(() => {
+    updateVisibleCards();
+    window.addEventListener("resize", updateVisibleCards);
+    return () => window.removeEventListener("resize", updateVisibleCards);
+  }, []);
 
   useEffect(() => {
     const preventTouch = (e) => {
@@ -59,13 +72,14 @@ const Carousel = ({ products }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="relative flex flex-col items-center justify-center">
       <div
         ref={carouselRef}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="flex gap-4 overflow-hidden"
+        className="flex gap-4 overflow-hidden w-full
+          h-48 sm:h-56 md:h-64 lg:h-72 xl:h-80"
       >
         {products
           .slice(currentIndex, currentIndex + visibleCards)
@@ -73,10 +87,20 @@ const Carousel = ({ products }) => {
             <Link
               key={index}
               to={`/product/${product.id}`}
-              className="flex flex-col  justify-center w-1/5"
+              className={`flex flex-col justify-center ${
+                visibleCards === 5
+                  ? "w-1/5 sm:w-1/4 md:w-1/5 lg:w-1/6"
+                  : "w-1/3"
+              }`}
             >
-              <img src={product.image} alt={product.title} className="w-full" />
-              <h3 className="text-lg font-semibold">{product.title}</h3>
+              <img
+                src={product.image}
+                alt={product.title}
+                className="w-full h-full object-cover"
+              />
+              <h3 className="text-sm md:text-lg font-semibold">
+                {product.title}
+              </h3>
               <p className="text-green-600 font-bold">${product.price}</p>
             </Link>
           ))}
@@ -98,6 +122,18 @@ const Carousel = ({ products }) => {
           )
         )}
       </div>
+      <button
+        onClick={goToPrevious}
+        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-full"
+      >
+        &#8249;
+      </button>
+      <button
+        onClick={goToNext}
+        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-full"
+      >
+        &#8250;
+      </button>
     </div>
   );
 };
